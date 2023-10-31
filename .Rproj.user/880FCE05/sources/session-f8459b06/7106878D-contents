@@ -1,0 +1,12 @@
+useDynLib(fastMatrix, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")
+export(fast_AR1_chol)
+export(fast_ex_chol)
+export(rmvnorm_R)
+export(rmvnorm_tianhai_ar1)
+export(rmvnorm_tianhai_cpp)
+export(rmvnorm_tianhai_cppArma)
+export(rmvnorm_tianhai_ex)
+
+

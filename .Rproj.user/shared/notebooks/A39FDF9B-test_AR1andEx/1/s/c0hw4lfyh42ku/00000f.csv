@@ -1,0 +1,3 @@
+"0","library(microbenchmark) # a fine timing package"
+"0","source(file = ""./R/test_ar1.R"")"
+"0","source(file = ""./R/test_ex.R"")"

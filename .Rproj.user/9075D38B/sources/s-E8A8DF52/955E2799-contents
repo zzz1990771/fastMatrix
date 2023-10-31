@@ -1,0 +1,39 @@
+rmvnorm_tianhai <- function(n, mu, Sigma) {
+  # Cholesky decomposition
+  L <- chol(Sigma)
+  
+  # Generate standard normal random variables
+  Z <- matrix(rnorm(n * p), n, p)
+  
+  # Transform samples
+  X <- Z %*% (L) + matrix(mu, n, p, byrow = TRUE)
+  
+  return(X)
+}
+
+
+rmvnorm_tianhai_cppArma <- function(n, mu, Sigma) {
+  # Cholesky decomposition
+  L <- fastMatrix::chol_decomp_RcppArma(Sigma)
+  
+  # Generate standard normal random variables
+  Z <- matrix(rnorm(n * p), n, p)
+  
+  # Transform samples
+  X <- fastMatrix::mat_mult_RcppArma(Z,t(L)) + matrix(mu, n, p, byrow = TRUE)
+  
+  return(X)
+}
+
+rmvnorm_tianhai_cpp <- function(n, mu, Sigma) {
+  # Cholesky decomposition
+  L <- fastMatrix::chol_decomp_Rcpp(Sigma)
+  
+  # Generate standard normal random variables
+  Z <- matrix(rnorm(n * p), n, p)
+  
+  # Transform samples
+  X <- fastMatrix::mat_mult_Rcpp(Z,t(L)) + matrix(mu, n, p, byrow = TRUE)
+  
+  return(X)
+}

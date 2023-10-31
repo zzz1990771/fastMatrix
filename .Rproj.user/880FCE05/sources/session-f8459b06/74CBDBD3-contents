@@ -1,0 +1,41 @@
+
+#generate a AR-1 cov matrix
+n=1000
+p=10000
+sigma <- 1
+times = 1:p
+rho = 0.3
+H <- abs(outer(times, times, "-"))
+V <- sigma * rho^H
+
+microbenchmark(
+  fastMatrix::chol_decomp_Rcpp(V),
+  fastMatrix::chol_decomp_RcppArma(V),
+  chol(V),
+  fast_AR1_chol(p,rho),
+  times = 5  # Number of times to run each method
+)
+
+microbenchmark(
+  chol(V),
+  fast_AR1_chol(p,rho),
+  times = 5  # Number of times to run each method
+)
+
+
+
+n=1000
+p=10000
+rho = 0.4
+V = matrix(rho,p,p)
+diag(V) = 1
+
+
+microbenchmark(
+     chol(V),
+     fast_ex_chol(p,rho),
+     times = 5  # Number of times to run each method
+   )
+# t(chol(V)[1:10,1:10])
+# fast_ex_chol(p,rho)[1:10,1:10]
+# p=5000

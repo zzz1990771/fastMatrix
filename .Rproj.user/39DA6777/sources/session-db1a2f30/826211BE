@@ -1,0 +1,26 @@
+{
+    "id": "826211BE",
+    "path": "~/Dropbox/lalala/github/fastMatrix/src/Rcpp_mat_oper.cpp",
+    "project_path": "src/Rcpp_mat_oper.cpp",
+    "type": "cpp",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1698121340861.0,
+    "source_on_save": false,
+    "relative_order": 6,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "22,27",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1698079333,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1698079333,
+    "read_only": false,
+    "read_only_alternatives": []
+}

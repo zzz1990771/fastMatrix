@@ -1,0 +1,18 @@
+Package: fastMatrix
+Type: Package
+Title: Efficient Generation of Random Multivariate Normal Samples
+Version: 0.1.0
+Date: 2023-10-30
+Author: Tianhai Zu
+Maintainer: Tianhai Zu <tianhai.zu@utsa.edu>
+Description: The package provides an efficient approach to generating random samples 
+    from a multivariate normal distribution. It includes various algorithms and optimization 
+    techniques, such as AR1-based Cholesky decomposition and RcppArma for high-performance 
+    matrix computations. The package is designed for both ease of use and computational 
+    efficiency.
+License: None
+Encoding: UTF-8
+Imports: Rcpp (>= 1.0.11)
+LinkingTo: Rcpp, RcppArmadillo
+Suggests: testthat
+RoxygenNote: 7.2.3

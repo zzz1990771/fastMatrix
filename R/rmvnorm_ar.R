@@ -1,0 +1,101 @@
+#' Generate Random Multivariate Normal Samples with AR(1) Covariance Structure
+#'
+#' This function generates random samples from a multivariate normal distribution with
+#' a given mean vector and an AR(1) covariance structure.
+#'
+#' @param n Integer. The number of samples to generate.
+#' @param mu Numeric vector. The mean vector for the multivariate normal distribution.
+#' @param p Integer. The dimension of the multivariate normal distribution.
+#' @param rho Numeric. The correlation parameter for the AR(1) covariance structure.
+#'
+#' @return A numeric matrix with 'n' rows and 'p' columns, where each row represents a
+#'   random sample from the specified multivariate normal distribution.
+#'
+#' @examples
+#' \dontrun{
+#'   n <- 100
+#'   mu <- c(0, 0)
+#'   p <- 2
+#'   rho <- 0.5
+#'   samples <- rmvnorm_tianhai_ar1(n, mu, p, rho)
+#' }
+#'
+#' @seealso \code{\link{fast_AR1_chol}}, \code{\link{mat_mult_RcppArma}}
+#'
+#' @export
+rmvnorm_tianhai_ar1 <- function(n, mu, p, rho) {
+  # Cholesky decomposition
+  L <- fast_AR1_chol(p,rho)
+  
+  # Generate standard normal random variables
+  Z <- matrix(rnorm(n * p), n, p)
+  
+  # Transform samples
+  X <- mat_mult_RcppArma(Z,t(L)) + matrix(mu, n, p, byrow = TRUE)
+  
+  return(X)
+}
+
+
+#' Generate Cholesky Decomposition for an AR(1) Covariance Structure
+#'
+#' This function computes the Cholesky decomposition of a covariance matrix with
+#' an AR(1) structure. The matrix is of dimension 'p x p'.
+#'
+#' @param p Integer. The dimension of the covariance matrix.
+#' @param rho Numeric. The correlation parameter for the AR(1) covariance structure.
+#'
+#' @return A numeric matrix of dimension 'p x p' representing the Cholesky decomposition
+#' of the AR(1) covariance matrix.
+#'
+#' @examples
+#' \dontrun{
+#'   p <- 5
+#'   rho <- 0.5
+#'   L <- fast_AR1_chol(p, rho)
+#' }
+#'
+#' @export
+fast_AR1_chol <- function(p,rho){
+  L = matrix(0,p,p)
+  K = sqrt(1-rho^2)
+  L[,1] = rho^(0:(p-1))
+  M = L[,1]*K
+  for (j in 2:p){
+    #L[,j] = c(rep(0,j-1),M[1:(p-j+1)])
+    L[j:p,j] = M[1:(p-j+1)]
+  }
+  return(L)
+}
+
+
+
+# Levinson-Durbin Algorithm for Cholesky decomposition of a Toeplitz matrix
+cholesky_toeplitz <- function(a) {
+  # 'a' is the first row of the Toeplitz matrix
+  n <- length(a)
+  L <- matrix(0, n, n)
+  
+  # Initialization
+  L[1, 1] <- sqrt(a[1])
+  
+  # Recursive calculation
+  for (k in 2:n) {
+    # Compute L[k, k]
+    sum_square <- 0
+    for (j in 1:(k-1)) {
+      sum_square <- sum_square + L[k, j] * L[k, j]
+    }
+    L[k, k] <- sqrt(a[1] - sum_square)
+    
+    # Compute the remaining elements of the k-th row
+    T_inv_b <- toeplitz(a[1:(k-1)])[1:(k-1), 1:(k-1)] %*% L[k, 1:(k-1)]
+    x <- solve(toeplitz(a[1:(k-1)]), a[2:k] - T_inv_b)
+    
+    L[k, 1:(k-1)] <- x
+  }
+  
+  return(L)
+}
+
+

@@ -1,0 +1,222 @@
+---
+title: "Testing AR1 and Exchangeable"
+author: "Tianhai"
+date: "2023-10-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Libraries
+
+```{r}
+library(microbenchmark) # a fine timing package
+source(file = "./R/test_ar1.R")
+source(file = "./R/test_ex.R")
+```
+
+
+# AR-1
+
+## Benchmarking with `microbenchmark`
+
+### p = 1000
+
+```{r}
+#generate a AR-1 cov matrix
+n=1000
+p=1000
+sigma <- 1
+times = 1:p
+rho = 0.3
+H <- abs(outer(times, times, "-"))
+V <- sigma * rho^H
+
+microbenchmark(
+  MASS::mvrnorm(n,rep(0,p), V),
+  mvtnorm::rmvnorm(n,rep(0,p), V),
+  mvnfast::rmvn(n,rep(0,p), V),
+  #fastmatrix::rmnorm(n,rep(0,p), V),
+  rmvnorm_tianhai(n,rep(0,p),V),
+  rmvnorm_tianhai_cpp(n,rep(0,p),V),
+  rmvnorm_tianhai_cppArma(n,rep(0,p),V),
+  rmvnorm_tianhai_ar1(n,rep(0,p),p,rho),
+  times = 5  # Number of times to run each method
+)
+```
+
+
+
+### p = 5000
+
+```{r}
+#generate a AR-1 cov matrix
+n=1000
+p=5000
+sigma <- 1
+times = 1:p
+rho = 0.3
+H <- abs(outer(times, times, "-"))
+V <- sigma * rho^H
+
+microbenchmark(
+  MASS::mvrnorm(n,rep(0,p), V),
+  mvtnorm::rmvnorm(n,rep(0,p), V),
+  mvnfast::rmvn(n,rep(0,p), V),
+  #fastmatrix::rmnorm(n,rep(0,p), V),
+  rmvnorm_tianhai(n,rep(0,p),V),
+  rmvnorm_tianhai_cpp(n,rep(0,p),V),
+  rmvnorm_tianhai_cppArma(n,rep(0,p),V),
+  rmvnorm_tianhai_ar1(n,rep(0,p),p,rho),
+  times = 5  # Number of times to run each method
+)
+```
+
+
+### n=5000, p = 5000
+
+```{r}
+#generate a AR-1 cov matrix
+n=5000
+p=5000
+sigma <- 1
+times = 1:p
+rho = 0.3
+H <- abs(outer(times, times, "-"))
+V <- sigma * rho^H
+
+microbenchmark(
+  MASS::mvrnorm(n,rep(0,p), V),
+  mvtnorm::rmvnorm(n,rep(0,p), V),
+  mvnfast::rmvn(n,rep(0,p), V),
+  #fastmatrix::rmnorm(n,rep(0,p), V),
+  rmvnorm_tianhai(n,rep(0,p),V),
+  rmvnorm_tianhai_cpp(n,rep(0,p),V),
+  rmvnorm_tianhai_cppArma(n,rep(0,p),V),
+  rmvnorm_tianhai_ar1(n,rep(0,p),p,rho),
+  times = 5  # Number of times to run each method
+)
+```
+
+### n=1000, p = 10000
+
+```{r}
+#generate a AR-1 cov matrix
+n=1000
+p=10000
+sigma <- 1
+times = 1:p
+rho = 0.3
+H <- abs(outer(times, times, "-"))
+V <- sigma * rho^H
+
+microbenchmark(
+  #MASS::mvrnorm(n,rep(0,p), V),
+  #mvtnorm::rmvnorm(n,rep(0,p), V),
+  mvnfast::rmvn(n,rep(0,p), V),
+  #fastmatrix::rmnorm(n,rep(0,p), V),
+  rmvnorm_tianhai(n,rep(0,p),V),
+  #rmvnorm_tianhai_cpp(n,rep(0,p),V),
+  rmvnorm_tianhai_cppArma(n,rep(0,p),V),
+  rmvnorm_tianhai_ar1(n,rep(0,p),p,rho),
+  times = 1  # Number of times to run each method
+)
+```
+
+
+# Exchangeable
+
+### p = 1000
+
+```{r}
+#generate an exchangeable cov matrix
+n=1000
+p=1000
+rho = 0.4
+V = matrix(rho,p,p)
+diag(V) = 1
+
+microbenchmark(
+  MASS::mvrnorm(n,rep(0,p), V),
+  mvtnorm::rmvnorm(n,rep(0,p), V),
+  mvnfast::rmvn(n,rep(0,p), V),
+  #fastmatrix::rmnorm(n,rep(0,p), V),
+  rmvnorm_tianhai(n,rep(0,p),V),
+  rmvnorm_tianhai_cpp(n,rep(0,p),V),
+  rmvnorm_tianhai_cppArma(n,rep(0,p),V),
+  rmvnorm_tianhai_ex(n,rep(0,p),p,rho),
+  times = 5  # Number of times to run each method
+)
+```
+
+### p = 5000
+
+```{r}
+#generate an exchangeable cov matrix
+n=1000
+p=5000
+rho = 0.4
+V = matrix(rho,p,p)
+diag(V) = 1
+
+microbenchmark(
+  #MASS::mvrnorm(n,rep(0,p), V),
+  #mvtnorm::rmvnorm(n,rep(0,p), V),
+  mvnfast::rmvn(n,rep(0,p), V),
+  #fastmatrix::rmnorm(n,rep(0,p), V),
+  rmvnorm_tianhai(n,rep(0,p),V),
+  #rmvnorm_tianhai_cpp(n,rep(0,p),V),
+  rmvnorm_tianhai_cppArma(n,rep(0,p),V),
+  rmvnorm_tianhai_ex(n,rep(0,p),p,rho),
+  times = 1  # Number of times to run each method
+)
+```
+
+### n=3000, p = 5000
+
+```{r}
+#generate an exchangeable cov matrix
+n=3000
+p=5000
+rho = 0.4
+V = matrix(rho,p,p)
+diag(V) = 1
+
+microbenchmark(
+  #MASS::mvrnorm(n,rep(0,p), V),
+  #mvtnorm::rmvnorm(n,rep(0,p), V),
+  mvnfast::rmvn(n,rep(0,p), V),
+  #fastmatrix::rmnorm(n,rep(0,p), V),
+  rmvnorm_tianhai(n,rep(0,p),V),
+  #rmvnorm_tianhai_cpp(n,rep(0,p),V),
+  rmvnorm_tianhai_cppArma(n,rep(0,p),V),
+  rmvnorm_tianhai_ex(n,rep(0,p),p,rho),
+  times = 1  # Number of times to run each method
+)
+```
+
+
+### n=3000, p = 10000
+
+```{r}
+#generate an exchangeable cov matrix
+n=3000
+p=10000
+rho = 0.4
+V = matrix(rho,p,p)
+diag(V) = 1
+
+microbenchmark(
+  MASS::mvrnorm(n,rep(0,p), V),
+  mvtnorm::rmvnorm(n,rep(0,p), V),
+  mvnfast::rmvn(n,rep(0,p), V),
+  #fastmatrix::rmnorm(n,rep(0,p), V),
+  rmvnorm_tianhai(n,rep(0,p),V),
+  rmvnorm_tianhai_cpp(n,rep(0,p),V),
+  rmvnorm_tianhai_cppArma(n,rep(0,p),V),
+  rmvnorm_tianhai_ex(n,rep(0,p),p,rho),
+  times = 2  # Number of times to run each method
+)
+```

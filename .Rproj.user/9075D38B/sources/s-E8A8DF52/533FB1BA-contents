@@ -1,0 +1,12 @@
+n=500
+p=10
+sigma <- 1
+times = 1:p
+rho = 0.3
+H <- abs(outer(times, times, "-"))
+V <- sigma * rho^H
+
+test = rmvnorm_tianhai(n,rep(0,p),V)
+
+
+cor(test)

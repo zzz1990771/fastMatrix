@@ -1,0 +1,5 @@
+test_that("chol_decomp_Rcpp returns expected output", {
+  A <- matrix(c(4, 1, 1, 4), 2, 2)
+  L <- chol_decomp_Rcpp(A)
+  expect_equal(L %*% t(L), A)
+})

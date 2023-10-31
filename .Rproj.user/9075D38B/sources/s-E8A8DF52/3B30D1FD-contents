@@ -1,0 +1,44 @@
+rmvnorm_tianhai_ex <- function(n, mu, p, rho) {
+  # Cholesky decomposition
+  L <- fast_ex_chol(p,rho)
+  
+  # Generate standard normal random variables
+  Z <- matrix(rnorm(n * p), n, p)
+  
+  # Transform samples
+  X <- fastMatrix::mat_mult_RcppArma(Z,t(L)) + matrix(mu, n, p, byrow = TRUE)
+  
+  return(X)
+}
+
+#' Fast computation of cholesky decomposition of an exchangeable covariance matrix
+#' 
+#' This method was inspired by https://austinrochford.com/posts/exch-chol-closed.html
+#'
+#' @param p 
+#' @param rho 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+fast_ex_chol <- function(p,rho){
+  diag <- numeric(p)
+  tril <- numeric(p)
+  
+  diag[1] <- 1
+  tril[1] <- rho
+  
+  for (j in 2:p) {
+    diag[j] <- sqrt(diag[j - 1]^2 - tril[j - 1]^2)
+    tril[j] <- (rho - 1) / diag[j] + diag[j]
+  }
+  tril[p] <- 0
+  L = matrix(tril,p,p,byrow=TRUE)
+  
+  
+  diag(L) = diag
+  
+  L[upper.tri(L,diag = FALSE)] = 0
+  return(L)
+}

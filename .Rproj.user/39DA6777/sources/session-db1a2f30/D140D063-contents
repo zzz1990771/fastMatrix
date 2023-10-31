@@ -1,0 +1,50 @@
+#' Fast computation of cholesky decomposition of an AR1 covariance matrix
+#' 
+#' This method was inspired by https://austinrochford.com/posts/exch-chol-closed.html
+#'
+#' @param p 
+#' @param rho 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+fast_AR1_chol <- function(p,rho){
+  L = matrix(0,p,p)
+  K = sqrt(1-rho^2)
+  L[,1] = rho^(0:(p-1))
+  M = L[,1]*K
+  for (j in 2:p){
+        L[j:p,j] = M[1:(p-j+1)]
+  }
+  return(L)
+}
+
+
+# Levinson-Durbin Algorithm for Cholesky decomposition of a Toeplitz matrix
+cholesky_toeplitz <- function(a) {
+  # 'a' is the first row of the Toeplitz matrix
+  n <- length(a)
+  L <- matrix(0, n, n)
+  
+  # Initialization
+  L[1, 1] <- sqrt(a[1])
+  
+  # Recursive calculation
+  for (k in 2:n) {
+    # Compute L[k, k]
+    sum_square <- 0
+    for (j in 1:(k-1)) {
+      sum_square <- sum_square + L[k, j] * L[k, j]
+    }
+    L[k, k] <- sqrt(a[1] - sum_square)
+    
+    # Compute the remaining elements of the k-th row
+    T_inv_b <- toeplitz(a[1:(k-1)])[1:(k-1), 1:(k-1)] %*% L[k, 1:(k-1)]
+    x <- solve(toeplitz(a[1:(k-1)]), a[2:k] - T_inv_b)
+    
+    L[k, 1:(k-1)] <- x
+  }
+  
+  return(L)
+}
