@@ -23,6 +23,8 @@
 #'
 #' @export
 rmvnorm_R <- function(n, mu, Sigma) {
+  p = length(mu)
+  
   # Cholesky decomposition
   L <- chol(Sigma)
   
@@ -60,6 +62,8 @@ rmvnorm_R <- function(n, mu, Sigma) {
 #'
 #' @export
 rmvnorm_tianhai_cppArma <- function(n, mu, Sigma) {
+  p = length(mu)
+  
   # Cholesky decomposition
   L <- chol_decomp_RcppArma(Sigma)
   
@@ -97,6 +101,8 @@ rmvnorm_tianhai_cppArma <- function(n, mu, Sigma) {
 #'
 #' @export
 rmvnorm_tianhai_cpp <- function(n, mu, Sigma) {
+  p = length(mu)
+  
   # Cholesky decomposition
   L <- chol_decomp_Rcpp(Sigma)
   
